@@ -312,6 +312,13 @@ namespace PcmHacking
                 }
             }
 
+            if (info.HardwareType == PcmType.P04 && device.MaxKernelSendSize < payload.Length)
+            {
+                logger.AddUserMessage("Kernel is bigger than test device supports. Cancelling");
+                logger.AddDebugMessage("Kernel size: " + payload.Length + " > Device's supported size: " + device.MaxKernelSendSize);
+                return false;
+            }
+
             logger.AddDebugMessage("Sending upload request for kernel size " + payload.Length + ", loadaddress " + info.KernelBaseAddress.ToString("X6"));
 
             Query<bool> uploadPermissionQuery = new Query<bool>(

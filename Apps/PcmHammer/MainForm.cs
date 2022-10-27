@@ -1219,6 +1219,28 @@ namespace PcmHacking
                         AddUserMessage($"Using OsID: {info.OSID}");
                     }
 
+                    //P04 code and kernel is unstable
+                    bool useExperimental = true;
+                    if (info.HardwareType == PcmType.P04)
+                    {
+                        this.Invoke((MethodInvoker)delegate ()
+                        {
+                            ExperimentalDialogBox dialogBox = new ExperimentalDialogBox();
+                            DialogResult dialogResult = dialogBox.ShowDialog(this);
+                            if (dialogResult == DialogResult.Cancel)
+                            {
+                                useExperimental = false;
+                                return;
+                            }
+                        });
+                    }
+
+                    if (!useExperimental)
+                    {
+                        this.AddUserMessage("Backing out of P04 programming.");
+                        return;
+                    }
+
                     await this.Vehicle.SuppressChatter();
 
                     bool unlocked = await this.Vehicle.UnlockEcu(info.KeyAlgorithm);
